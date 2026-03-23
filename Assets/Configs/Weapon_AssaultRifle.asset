@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59484b3ed6251cd42ade09c62945cbd3, type: 3}
+  m_Name: Weapon_AssaultRifle
+  m_EditorClassIdentifier: 
+  weaponName: M4A1 Assault Rifle
+  fireMode: 1
+  burstCount: 3
+  ammoCapacity: 30
+  maxMagazines: 5
+  reloadTime: 2.5
+  canReloadWhileMoving: 1
+  canReloadWhileFiring: 0
+  ammoTypes:
+  - {fileID: 11400000, guid: 985ae83d6f7094d41842594eb0eebf67, type: 2}
+  - {fileID: 11400000, guid: d78d2eb2b971a444a9bdb3c09befaafe, type: 2}
+  - {fileID: 11400000, guid: 3d846733a2b8fbf4aa6f2d9a1d29690c, type: 2}
+  ammoSwitchTime: 1.5
+  accuracyConfig: {fileID: 11400000, guid: 7e229722524bed047b0876333bb21ff1, type: 2}
+  feedbackConfig: {fileID: 11400000, guid: 0afd96fb271cf4e43a41c07e2fd1f382, type: 2}

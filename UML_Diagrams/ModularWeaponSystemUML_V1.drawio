@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="Claude" version="26.0.0">
+  <diagram name="Weapon System UML" id="weapon-system-uml">
+    <mxGraphModel dx="2800" dy="2400" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="4000" pageHeight="3000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ============================================ -->
+        <!-- SECTION: ENUMS (Top Row)                     -->
+        <!-- ============================================ -->
+
+        <!-- Section Label -->
+        <mxCell id="section_enums" value="ENUMS" style="text;html=1;fontSize=20;fontStyle=1;fillColor=#fff2cc;strokeColor=#d6b656;align=center;verticalAlign=middle;rounded=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1720" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- FireMode -->
+        <mxCell id="enum_firemode" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«enumeration»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;FireMode&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;SemiAuto&lt;br/&gt;Automatic&lt;br/&gt;Burst&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="160" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- SightType -->
+        <mxCell id="enum_sighttype" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«enumeration»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;SightType&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;Day&lt;br/&gt;Thermal&lt;br/&gt;NightVision&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="220" y="80" width="160" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- LockMode -->
+        <mxCell id="enum_lockmode" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«enumeration»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;LockMode&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;Automatic&lt;br/&gt;Manual&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="400" y="80" width="160" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- ReticleType -->
+        <mxCell id="enum_reticletype" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«enumeration»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ReticleType&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;Crosshair&lt;br/&gt;Chevron&lt;br/&gt;Dot&lt;br/&gt;Custom&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="580" y="80" width="160" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- MovementLimit -->
+        <mxCell id="enum_movlimit" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«enumeration»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;MovementLimit&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;Full360&lt;br/&gt;Half180&lt;br/&gt;Fixed&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="760" y="80" width="160" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- AmmoType -->
+        <mxCell id="enum_ammotype" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«enumeration»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;AmmoType&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;Standard&lt;br/&gt;AP&lt;br/&gt;HE&lt;br/&gt;HEAT&lt;br/&gt;Smoke&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="940" y="80" width="160" height="150" as="geometry"/>
+        </mxCell>
+
+        <!-- TargetPosture -->
+        <mxCell id="enum_posture" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«enumeration»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;TargetPosture&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;Standing&lt;br/&gt;Crouching&lt;br/&gt;Prone&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="80" width="160" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- TargetType -->
+        <mxCell id="enum_targettype" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«enumeration»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;TargetType&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;Infantry&lt;br/&gt;LightVehicle&lt;br/&gt;HeavyArmor&lt;br/&gt;Aircraft&lt;br/&gt;Structure&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="80" width="160" height="150" as="geometry"/>
+        </mxCell>
+
+        <!-- ObstacleType -->
+        <mxCell id="enum_obstacle" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«enumeration»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ObstacleType&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;Building&lt;br/&gt;Vegetation&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="80" width="160" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION: INTERFACES (Row 2)                  -->
+        <!-- ============================================ -->
+
+        <mxCell id="section_iface" value="INTERFACES (Contracts)" style="text;html=1;fontSize=20;fontStyle=1;fillColor=#d5e8d4;strokeColor=#82b366;align=center;verticalAlign=middle;rounded=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="1200" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- IWeapon -->
+        <mxCell id="iface_weapon" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«interface»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;IWeapon&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ Fire() : void&lt;br/&gt;+ StopFire() : void&lt;br/&gt;+ CanFire() : bool&lt;br/&gt;+ GetCurrentAmmo() : int&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40" y="340" width="220" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- IReloadable -->
+        <mxCell id="iface_reload" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«interface»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;IReloadable&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ Reload() : void&lt;br/&gt;+ CanReload() : bool&lt;br/&gt;+ IsReloading : bool&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="280" y="340" width="220" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- IOptics -->
+        <mxCell id="iface_optics" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«interface»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;IOptics&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ ToggleZoom() : void&lt;br/&gt;+ CycleSightMode() : void&lt;br/&gt;+ ToggleLaser() : void&lt;br/&gt;+ MeasureRange() : float&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="520" y="340" width="220" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- ITurret -->
+        <mxCell id="iface_turret" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«interface»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ITurret&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ Rotate(h, v) : void&lt;br/&gt;+ ClampRotation() : void&lt;br/&gt;+ GetAngles() : Vector2&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="760" y="340" width="220" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- ILockable -->
+        <mxCell id="iface_lockable" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«interface»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ILockable&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ TryLock(Transform) : void&lt;br/&gt;+ ReleaseLock() : void&lt;br/&gt;+ IsLocked : bool&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="340" width="230" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION: SCRIPTABLE OBJECTS (Row 3)          -->
+        <!-- ============================================ -->
+
+        <mxCell id="section_so" value="SCRIPTABLE OBJECTS (Data / Configuration)" style="text;html=1;fontSize=20;fontStyle=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=center;verticalAlign=middle;rounded=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="540" width="1720" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- WeaponConfig (main) -->
+        <mxCell id="so_weapon" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«ScriptableObject»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;WeaponConfig&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ weaponName : string&lt;br/&gt;+ fireMode : FireMode&lt;br/&gt;+ ammoCapacity : int&lt;br/&gt;+ maxMagazines : int&lt;br/&gt;+ reloadTime : float&lt;br/&gt;+ canReloadWhileMoving : bool&lt;br/&gt;+ canReloadWhileFiring : bool&lt;br/&gt;+ burstCount : int&lt;br/&gt;+ ammoTypes : AmmoConfig[ ]&lt;br/&gt;+ ammoSwitchTime : float&lt;br/&gt;&lt;br/&gt;+ opticsConfig : OpticsConfig&lt;br/&gt;+ turretConfig : TurretConfig&lt;br/&gt;+ accuracyConfig : AccuracyConfig&lt;br/&gt;+ feedbackConfig : FeedbackConfig&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="600" width="280" height="350" as="geometry"/>
+        </mxCell>
+
+        <!-- AmmoConfig -->
+        <mxCell id="so_ammo" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«ScriptableObject»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;AmmoConfig&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ ammoType : AmmoType&lt;br/&gt;+ penetratesBuildings : bool&lt;br/&gt;+ penetratesVegetation : bool&lt;br/&gt;+ timeToImpactCurve : AnimationCurve&lt;br/&gt;+ timeToDestroy : float&lt;br/&gt;+ hitChanceByRange : float[ ]&lt;br/&gt;+ damageMultiplier : float&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="380" y="600" width="280" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- AccuracyConfig -->
+        <mxCell id="so_accuracy" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«ScriptableObject»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;AccuracyConfig&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ baseHitChance : float&lt;br/&gt;+ rangeDropoffCurve : AnimationCurve&lt;br/&gt;+ movementPenaltyCurve : AnimationCurve&lt;br/&gt;+ postureModifiers : Dictionary&lt;br/&gt;+ targetTypeModifiers : Dictionary&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="380" y="850" width="280" height="190" as="geometry"/>
+        </mxCell>
+
+        <!-- OpticsConfig -->
+        <mxCell id="so_optics" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«ScriptableObject»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;OpticsConfig&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ sightType : SightType&lt;br/&gt;+ hasZoom : bool&lt;br/&gt;+ zoomLevel : float&lt;br/&gt;+ reticleType : ReticleType&lt;br/&gt;+ hasTargetLock : bool&lt;br/&gt;+ lockRange : float&lt;br/&gt;+ lockMode : LockMode&lt;br/&gt;+ hasLaser : bool&lt;br/&gt;+ hasRangeFinder : bool&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="720" y="600" width="250" height="260" as="geometry"/>
+        </mxCell>
+
+        <!-- TurretConfig -->
+        <mxCell id="so_turret" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«ScriptableObject»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;TurretConfig&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ horizontalFOV : float&lt;br/&gt;+ verticalFOV : float&lt;br/&gt;+ traverseSpeed : float&lt;br/&gt;+ elevationSpeed : float&lt;br/&gt;+ movementLimit : MovementLimit&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="600" width="250" height="190" as="geometry"/>
+        </mxCell>
+
+        <!-- FeedbackConfig -->
+        <mxCell id="so_feedback" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«ScriptableObject»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;FeedbackConfig&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ showHitIndicator : bool&lt;br/&gt;+ showKillIndicator : bool&lt;br/&gt;+ systemDestroyedAlert : bool&lt;br/&gt;+ hitMarkerDuration : float&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="600" width="250" height="170" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- SECTION: RUNTIME (Row 4)                     -->
+        <!-- ============================================ -->
+
+        <mxCell id="section_runtime" value="MONOBEHAVIOURS (Runtime Components)" style="text;html=1;fontSize=20;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;verticalAlign=middle;rounded=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1100" width="1720" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- WeaponController -->
+        <mxCell id="ctrl_weapon" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«MonoBehaviour»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;WeaponController&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;- config : WeaponConfig&lt;br/&gt;- firingHandler : FiringHandler&lt;br/&gt;- reloadHandler : ReloadHandler&lt;br/&gt;- opticsHandler : OpticsHandler&lt;br/&gt;- turretHandler : TurretHandler&lt;br/&gt;- lockHandler : LockHandler&lt;br/&gt;- feedbackHandler : FeedbackHandler&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ Initialize(WeaponConfig) : void&lt;br/&gt;+ SwitchAmmoType(AmmoType) : void&lt;br/&gt;+ GetHandler&amp;lt;T&amp;gt;() : T&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1160" width="300" height="290" as="geometry"/>
+        </mxCell>
+
+        <!-- FiringHandler -->
+        <mxCell id="handler_firing" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;FiringHandler&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;font-style:italic;'&gt;implements IWeapon&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;- config : WeaponConfig&lt;br/&gt;- currentAmmo : int&lt;br/&gt;- activeAmmoConfig : AmmoConfig&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ Fire() : void&lt;br/&gt;+ StopFire() : void&lt;br/&gt;+ CanFire() : bool&lt;br/&gt;+ GetCurrentAmmo() : int&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="420" y="1160" width="240" height="230" as="geometry"/>
+        </mxCell>
+
+        <!-- ReloadHandler -->
+        <mxCell id="handler_reload" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;ReloadHandler&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;font-style:italic;'&gt;implements IReloadable&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;- isReloading : bool&lt;br/&gt;- remainingMagazines : int&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ Reload() : void&lt;br/&gt;+ CanReload() : bool&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="700" y="1160" width="240" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- OpticsHandler -->
+        <mxCell id="handler_optics" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;OpticsHandler&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;font-style:italic;'&gt;implements IOptics&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;- opticsConfig : OpticsConfig&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ ToggleZoom() : void&lt;br/&gt;+ CycleSightMode() : void&lt;br/&gt;+ ToggleLaser() : void&lt;br/&gt;+ MeasureRange() : float&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="980" y="1160" width="240" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- TurretHandler -->
+        <mxCell id="handler_turret" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;TurretHandler&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;font-style:italic;'&gt;implements ITurret&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;- turretConfig : TurretConfig&lt;br/&gt;- currentAngles : Vector2&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ Rotate(float, float) : void&lt;br/&gt;+ ClampRotation() : void&lt;br/&gt;+ GetAngles() : Vector2&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="420" y="1430" width="260" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- LockHandler -->
+        <mxCell id="handler_lock" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;LockHandler&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;font-style:italic;'&gt;implements ILockable&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;- opticsConfig : OpticsConfig&lt;br/&gt;- lockedTarget : Transform&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ TryLock(Transform) : bool&lt;br/&gt;+ ReleaseLock() : void&lt;br/&gt;+ IsLocked : bool&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="720" y="1430" width="260" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- FeedbackHandler -->
+        <mxCell id="handler_feedback" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;FeedbackHandler&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;font-style:italic;'&gt;event-based&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;- feedbackConfig : FeedbackConfig&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ ShowHitMarker() : void&lt;br/&gt;+ ShowKillIndicator() : void&lt;br/&gt;+ OnSystemDamaged() : void&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="1430" width="260" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- UTILITY: HitCalculator                       -->
+        <!-- ============================================ -->
+
+        <mxCell id="util_hitcalc" value="&lt;p style='margin:0px;margin-top:4px;text-align:center;'&gt;&lt;b&gt;«static»&lt;/b&gt;&lt;br/&gt;&lt;b&gt;HitCalculator&lt;/b&gt;&lt;/p&gt;&lt;hr size='1'/&gt;&lt;p style='margin:0px;margin-left:4px;'&gt;+ CalcHitChance(&lt;br/&gt;    config : WeaponConfig,&lt;br/&gt;    ammo : AmmoConfig,&lt;br/&gt;    range : float,&lt;br/&gt;    posture : TargetPosture,&lt;br/&gt;    speed : float&lt;br/&gt;  ) : float&lt;br/&gt;&lt;br/&gt;+ EvalPenetration(&lt;br/&gt;    ammo : AmmoConfig,&lt;br/&gt;    obstacle : ObstacleType&lt;br/&gt;  ) : bool&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=13;fontFamily=Helvetica;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="1160" width="280" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- ARROWS: WeaponConfig -> Sub-configs          -->
+        <!-- ============================================ -->
+
+        <!-- WeaponConfig -> AmmoConfig (composition) -->
+        <mxCell id="arrow_wc_ammo" style="endArrow=diamondThin;endFill=1;endSize=14;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="so_weapon" target="so_ammo">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- WeaponConfig -> OpticsConfig -->
+        <mxCell id="arrow_wc_optics" style="endArrow=diamondThin;endFill=1;endSize=14;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="so_weapon" target="so_optics">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- WeaponConfig -> TurretConfig -->
+        <mxCell id="arrow_wc_turret" style="endArrow=diamondThin;endFill=1;endSize=14;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="so_weapon" target="so_turret">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- WeaponConfig -> AccuracyConfig -->
+        <mxCell id="arrow_wc_accuracy" style="endArrow=diamondThin;endFill=1;endSize=14;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="so_weapon" target="so_accuracy">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- WeaponConfig -> FeedbackConfig -->
+        <mxCell id="arrow_wc_feedback" style="endArrow=diamondThin;endFill=1;endSize=14;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="so_weapon" target="so_feedback">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- ARROWS: WeaponController -> Handlers         -->
+        <!-- ============================================ -->
+
+        <mxCell id="arrow_ctrl_firing" style="endArrow=open;endSize=12;strokeWidth=2;strokeColor=#6c8ebf;dashed=0;" edge="1" parent="1" source="ctrl_weapon" target="handler_firing">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arrow_ctrl_reload" style="endArrow=open;endSize=12;strokeWidth=2;strokeColor=#6c8ebf;dashed=0;" edge="1" parent="1" source="ctrl_weapon" target="handler_reload">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arrow_ctrl_optics" style="endArrow=open;endSize=12;strokeWidth=2;strokeColor=#6c8ebf;dashed=0;" edge="1" parent="1" source="ctrl_weapon" target="handler_optics">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arrow_ctrl_turret" style="endArrow=open;endSize=12;strokeWidth=2;strokeColor=#6c8ebf;dashed=0;" edge="1" parent="1" source="ctrl_weapon" target="handler_turret">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arrow_ctrl_lock" style="endArrow=open;endSize=12;strokeWidth=2;strokeColor=#6c8ebf;dashed=0;" edge="1" parent="1" source="ctrl_weapon" target="handler_lock">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arrow_ctrl_feedback" style="endArrow=open;endSize=12;strokeWidth=2;strokeColor=#6c8ebf;dashed=0;" edge="1" parent="1" source="ctrl_weapon" target="handler_feedback">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- ARROWS: Handlers implement Interfaces        -->
+        <!-- (dashed with triangle arrowhead = realizes)  -->
+        <!-- ============================================ -->
+
+        <mxCell id="arrow_impl_weapon" style="endArrow=block;endFill=0;endSize=14;strokeWidth=2;strokeColor=#82b366;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="handler_firing" target="iface_weapon">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arrow_impl_reload" style="endArrow=block;endFill=0;endSize=14;strokeWidth=2;strokeColor=#82b366;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="handler_reload" target="iface_reload">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arrow_impl_optics" style="endArrow=block;endFill=0;endSize=14;strokeWidth=2;strokeColor=#82b366;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="handler_optics" target="iface_optics">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arrow_impl_turret" style="endArrow=block;endFill=0;endSize=14;strokeWidth=2;strokeColor=#82b366;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="handler_turret" target="iface_turret">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arrow_impl_lock" style="endArrow=block;endFill=0;endSize=14;strokeWidth=2;strokeColor=#82b366;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="handler_lock" target="iface_lockable">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- ARROWS: Controller uses WeaponConfig         -->
+        <!-- ============================================ -->
+
+        <mxCell id="arrow_ctrl_config" style="endArrow=open;endSize=12;strokeWidth=2;strokeColor=#9673a6;dashed=1;dashPattern=4 4;" edge="1" parent="1" source="ctrl_weapon" target="so_weapon">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FiringHandler uses HitCalculator -->
+        <mxCell id="arrow_fire_hitcalc" style="endArrow=open;endSize=12;strokeWidth=2;strokeColor=#d6b656;dashed=1;dashPattern=4 4;" edge="1" parent="1" source="handler_firing" target="util_hitcalc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- LEGEND                                       -->
+        <!-- ============================================ -->
+
+        <mxCell id="legend_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="1500" width="280" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend_title" value="&lt;b&gt;LEGEND&lt;/b&gt;" style="text;html=1;fontSize=16;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="1505" width="120" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend1" value="&#x25C6;&#x2500;&#x2500;&#x2500;  Composition (owns)" style="text;html=1;fontSize=13;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="1540" width="240" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend2" value="&#x2500;&#x2500;&#x2500;&#x25B7;  Uses / Has reference" style="text;html=1;fontSize=13;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="1570" width="240" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend3" value="- - -&#x25B7;  Implements (realizes)" style="text;html=1;fontSize=13;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="1600" width="240" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend4" value="- - -&#x25B7;  Dependency (uses)" style="text;html=1;fontSize=13;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="1630" width="240" height="25" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
