@@ -14,7 +14,7 @@
 
 ## Demo
 
-https://github.com/user-attachments/assets/cd21f408-fdf9-4af3-8a93-32ad7e784de2
+https://github.com/user-attachments/assets/b75357b4-9975-4ba8-a0cb-0775df34b99b
 
 > *Test scene — firing, reloading, ammo switching, and hit feedback. All driven by ScriptableObjects.*
 
