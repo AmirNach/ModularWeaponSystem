@@ -14,7 +14,7 @@
 
 ## Demo
 
-https://github.com/AmirNach/ModularWeaponSystem/raw/main/Media/example.mp4
+https://github.com/user-attachments/assets/cd21f408-fdf9-4af3-8a93-32ad7e784de2
 
 > *Test scene — firing, reloading, ammo switching, and hit feedback. All driven by ScriptableObjects.*
 
