@@ -1,25 +1,30 @@
+#if ENABLE_INPUT_SYSTEM
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace WeaponSystem.Example
 {
     /// <summary>
     /// Drop-in test script with basic 3D visuals.
-    /// Creates a weapon from ScriptableObject configs at runtime.
+    /// Uses the New Input System via InputActionAsset.
     ///
-    /// Controls:
-    ///   LMB / Space   — Fire
-    ///   Release        — StopFire (for auto mode)
-    ///   R              — Reload
-    ///   1-5            — Switch ammo type (by index)
-    ///   H              — Simulate hit feedback
-    ///   K              — Simulate kill feedback
-    ///   D              — Simulate system damaged
-    ///   T              — Run HitCalculator test at multiple ranges
+    /// Controls (keyboard / gamepad):
+    ///   LMB / Space / RT       — Fire
+    ///   Release                 — StopFire (for auto mode)
+    ///   R / X(gamepad)          — Reload
+    ///   1-5 / D-Pad             — Switch ammo type
+    ///   H                       — Simulate hit feedback
+    ///   K                       — Simulate kill feedback
+    ///   D                       — Simulate system damaged
+    ///   T                       — Run HitCalculator test
     /// </summary>
     public class WeaponTestScene : MonoBehaviour
     {
         [Header("Assign a WeaponConfig asset here")]
         [SerializeField] private WeaponConfig weaponConfig;
+
+        [Header("Input Actions Asset")]
+        [SerializeField] private InputActionAsset inputActions;
 
         [Header("Test Parameters")]
         [SerializeField] private float testShooterSpeed = 0f;
@@ -28,6 +33,16 @@ namespace WeaponSystem.Example
 
         private WeaponController _controller;
         private string _log = "";
+
+        // --- Input Actions ---
+        private InputActionMap _weaponMap;
+        private InputAction _fireAction;
+        private InputAction _reloadAction;
+        private InputAction[] _ammoActions;
+        private InputAction _hitAction;
+        private InputAction _killAction;
+        private InputAction _damageAction;
+        private InputAction _hitTestAction;
 
         // --- Visuals ---
         private Transform _gunPivot;
@@ -50,7 +65,68 @@ namespace WeaponSystem.Example
         private void Start()
         {
             BuildScene();
+            SetupInput();
             SetupWeapon();
+        }
+
+        private void SetupInput()
+        {
+            if (inputActions == null)
+            {
+                Log("<color=red>ERROR: No InputActionAsset assigned! Drag WeaponInputActions into the field.</color>");
+                return;
+            }
+
+            _weaponMap = inputActions.FindActionMap("Weapon", throwIfNotFound: true);
+
+            _fireAction = _weaponMap.FindAction("Fire");
+            _reloadAction = _weaponMap.FindAction("Reload");
+            _hitAction = _weaponMap.FindAction("SimulateHit");
+            _killAction = _weaponMap.FindAction("SimulateKill");
+            _damageAction = _weaponMap.FindAction("SimulateDamage");
+            _hitTestAction = _weaponMap.FindAction("RunHitTest");
+
+            _ammoActions = new InputAction[5];
+            for (int i = 0; i < 5; i++)
+                _ammoActions[i] = _weaponMap.FindAction($"SwitchAmmo{i + 1}");
+
+            // Subscribe events
+            _fireAction.started += _ => _controller?.Fire();
+            _fireAction.canceled += _ => _controller?.StopFire();
+
+            _reloadAction.performed += _ => OnReloadPressed();
+
+            for (int i = 0; i < 5; i++)
+            {
+                int index = i; // capture for closure
+                if (_ammoActions[i] != null)
+                    _ammoActions[i].performed += _ => TrySwitchAmmo(index);
+            }
+
+            _hitAction.performed += _ => _controller?.NotifyHit();
+            _killAction.performed += _ => _controller?.NotifyKill();
+            _damageAction.performed += _ => _controller?.NotifySystemDamaged();
+            _hitTestAction.performed += _ => RunHitCalcTest();
+
+            _weaponMap.Enable();
+        }
+
+        private void OnReloadPressed()
+        {
+            if (_controller == null) return;
+
+            if (_controller.Reloading.CanReload())
+            {
+                Log("Reloading...");
+                _controller.Reload(isMoving: testShooterSpeed > 0.1f);
+            }
+            else
+                Log("<color=#888>Can't reload</color>");
+        }
+
+        private void OnDestroy()
+        {
+            _weaponMap?.Disable();
         }
 
         private void BuildScene()
@@ -82,17 +158,18 @@ namespace WeaponSystem.Example
             _gunPivot.position = new Vector3(0.4f, 1.1f, -1.2f);
             _gunPivot.rotation = Quaternion.Euler(0f, 0f, 0f);
 
-            // Body (dark box)
+            var gunMat = new Material(Shader.Find("Standard"));
+            gunMat.color = new Color(0.2f, 0.2f, 0.22f);
+
+            // Body
             var body = GameObject.CreatePrimitive(PrimitiveType.Cube);
             body.name = "GunBody";
             body.transform.SetParent(_gunPivot);
             body.transform.localPosition = Vector3.zero;
             body.transform.localScale = new Vector3(0.08f, 0.1f, 0.6f);
-            var gunMat = new Material(Shader.Find("Standard"));
-            gunMat.color = new Color(0.2f, 0.2f, 0.22f);
             body.GetComponent<Renderer>().material = gunMat;
 
-            // Barrel (cylinder)
+            // Barrel
             var barrel = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             barrel.name = "Barrel";
             barrel.transform.SetParent(_gunPivot);
@@ -103,7 +180,7 @@ namespace WeaponSystem.Example
             barrelMat.color = new Color(0.3f, 0.3f, 0.32f);
             barrel.GetComponent<Renderer>().material = barrelMat;
 
-            // Magazine (small box below)
+            // Magazine
             var mag = GameObject.CreatePrimitive(PrimitiveType.Cube);
             mag.name = "Magazine";
             mag.transform.SetParent(_gunPivot);
@@ -132,19 +209,20 @@ namespace WeaponSystem.Example
             _muzzleFlash.intensity = 0f;
             _muzzleFlash.range = 3f;
 
-            // --- Target dummy (cylinder + sphere head) ---
+            // --- Target dummy ---
             var targetParent = new GameObject("TargetDummy");
             _target = targetParent.transform;
             _target.position = new Vector3(0f, 0f, 8f);
+
+            var targetMat = new Material(Shader.Find("Standard"));
+            targetMat.color = new Color(0.8f, 0.35f, 0.3f);
+            targetMat.EnableKeyword("_EMISSION");
 
             var torso = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             torso.name = "Torso";
             torso.transform.SetParent(_target);
             torso.transform.localPosition = new Vector3(0f, 0.9f, 0f);
             torso.transform.localScale = new Vector3(0.4f, 0.9f, 0.4f);
-            var targetMat = new Material(Shader.Find("Standard"));
-            targetMat.color = new Color(0.8f, 0.35f, 0.3f);
-            targetMat.EnableKeyword("_EMISSION");
             torso.GetComponent<Renderer>().material = targetMat;
             _targetRenderer = torso.GetComponent<Renderer>();
             _targetBaseColor = targetMat.color;
@@ -156,7 +234,6 @@ namespace WeaponSystem.Example
             head.transform.localScale = new Vector3(0.35f, 0.35f, 0.35f);
             head.GetComponent<Renderer>().material = targetMat;
 
-            // Base plate
             var basePlate = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             basePlate.name = "Base";
             basePlate.transform.SetParent(_target);
@@ -166,7 +243,7 @@ namespace WeaponSystem.Example
             baseMat.color = new Color(0.4f, 0.4f, 0.4f);
             basePlate.GetComponent<Renderer>().material = baseMat;
 
-            // --- Ambient light ---
+            // --- Light ---
             var lightGO = new GameObject("SceneLight");
             var sceneLight = lightGO.AddComponent<Light>();
             sceneLight.type = LightType.Directional;
@@ -188,7 +265,7 @@ namespace WeaponSystem.Example
 
             _controller.Initialize(weaponConfig);
 
-            // Subscribe events — debug log + visuals
+            // Subscribe events
             _controller.Firing.OnFired += OnFired;
             _controller.Reloading.OnReloadComplete += () =>
                 Log($"<color=cyan>RELOAD COMPLETE</color> — Mags: {_controller.Reloading.RemainingMagazines}");
@@ -198,79 +275,37 @@ namespace WeaponSystem.Example
 
             Log($"<color=white><b>{weaponConfig.weaponName}</b> ready</color>");
             Log($"  {weaponConfig.fireMode} | {weaponConfig.ammoCapacity} rounds | {weaponConfig.maxMagazines} mags");
-            Log("  Space=Fire  R=Reload  1-3=Ammo  H=Hit  K=Kill  T=Test");
+            Log("  Space/LMB=Fire  R=Reload  1-3=Ammo  H=Hit  K=Kill  T=Test");
         }
 
         // -----------------------------------------------------------------
-        // Fired callback — visuals
+        // Fired callback
         // -----------------------------------------------------------------
 
         private void OnFired(AmmoConfig ammo)
         {
-            // Muzzle flash
             _muzzleFlashTimer = 0.06f;
-
-            // Recoil kick
             _recoilOffset = -0.08f;
-
             Log($"<color=yellow>FIRE</color> [{ammo.ammoType}] — {_controller.GetCurrentAmmo()}/{weaponConfig.ammoCapacity}");
         }
 
         // -----------------------------------------------------------------
-        // Update — input + visual ticks
+        // Update — visuals only (input is event-driven now)
         // -----------------------------------------------------------------
 
         private void Update()
         {
             if (_controller == null || weaponConfig == null) return;
-
-            HandleInput();
             TickVisuals();
-        }
-
-        private void HandleInput()
-        {
-            // Fire
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
-                _controller.Fire();
-            if (Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(0))
-                _controller.StopFire();
-
-            // Reload
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                if (_controller.Reloading.CanReload())
-                {
-                    Log("Reloading...");
-                    _controller.Reload(isMoving: testShooterSpeed > 0.1f);
-                }
-                else
-                    Log("<color=#888>Can't reload</color>");
-            }
-
-            // Switch ammo
-            for (int i = 0; i < 5; i++)
-            {
-                if (Input.GetKeyDown(KeyCode.Alpha1 + i))
-                    TrySwitchAmmo(i);
-            }
-
-            // Feedback
-            if (Input.GetKeyDown(KeyCode.H)) _controller.NotifyHit();
-            if (Input.GetKeyDown(KeyCode.K)) _controller.NotifyKill();
-            if (Input.GetKeyDown(KeyCode.D)) _controller.NotifySystemDamaged();
-            if (Input.GetKeyDown(KeyCode.T)) RunHitCalcTest();
         }
 
         private void TickVisuals()
         {
             float dt = Time.deltaTime;
 
-            // Muzzle flash fade
             _muzzleFlashTimer -= dt;
             _muzzleFlash.intensity = _muzzleFlashTimer > 0f ? 4f : 0f;
 
-            // Recoil spring-back
             _recoilOffset = Mathf.Lerp(_recoilOffset, 0f, dt * 20f);
             if (_gunPivot != null)
             {
@@ -279,13 +314,11 @@ namespace WeaponSystem.Example
                 _gunPivot.localPosition = pos;
             }
 
-            // Target hit flash (white)
             if (_hitFlashTimer > 0f)
             {
                 _hitFlashTimer -= dt;
                 _targetRenderer.material.color = Color.white;
             }
-            // Kill flash (stays red longer)
             else if (_killFlashTimer > 0f)
             {
                 _killFlashTimer -= dt;
@@ -297,7 +330,6 @@ namespace WeaponSystem.Example
                 _targetRenderer.material.color = _targetBaseColor;
             }
 
-            // Damage screen tint
             _damageTimer -= dt;
         }
 
@@ -357,21 +389,10 @@ namespace WeaponSystem.Example
 
         private void OnGUI()
         {
-            // --- Ammo HUD (bottom-right) ---
             DrawAmmoHUD();
-
-            // --- Crosshair (center) ---
             DrawCrosshair();
-
-            // --- Hit marker (center, briefly) ---
-            if (_hitFlashTimer > 0f)
-                DrawHitMarker();
-
-            // --- Damage vignette ---
-            if (_damageTimer > 0f)
-                DrawDamageOverlay();
-
-            // --- Log panel (top-left) ---
+            if (_hitFlashTimer > 0f) DrawHitMarker();
+            if (_damageTimer > 0f) DrawDamageOverlay();
             DrawLogPanel();
         }
 
@@ -382,15 +403,12 @@ namespace WeaponSystem.Example
             float bx = Screen.width - 220;
             float by = Screen.height - 80;
 
-            // Background
-            var bgTex = Texture2D.whiteTexture;
             GUI.color = new Color(0, 0, 0, 0.6f);
-            GUI.DrawTexture(new Rect(bx - 10, by - 10, 220, 75), bgTex);
+            GUI.DrawTexture(new Rect(bx - 10, by - 10, 220, 75), Texture2D.whiteTexture);
             GUI.color = Color.white;
 
             var big = new GUIStyle(GUI.skin.label) { fontSize = 28, fontStyle = FontStyle.Bold, richText = true };
             big.normal.textColor = Color.white;
-
             var small = new GUIStyle(GUI.skin.label) { fontSize = 13, richText = true };
             small.normal.textColor = new Color(0.7f, 0.7f, 0.7f);
 
@@ -419,15 +437,10 @@ namespace WeaponSystem.Example
 
             GUI.color = new Color(0.8f, 1f, 0.8f, 0.8f);
             var tex = Texture2D.whiteTexture;
-
-            // Horizontal
             GUI.DrawTexture(new Rect(cx - size, cy - thick / 2, size * 2, thick), tex);
-            // Vertical
             GUI.DrawTexture(new Rect(cx - thick / 2, cy - size, thick, size * 2), tex);
-            // Gap (black center dot)
             GUI.color = new Color(0, 0, 0, 0.5f);
             GUI.DrawTexture(new Rect(cx - 1.5f, cy - 1.5f, 3, 3), tex);
-
             GUI.color = Color.white;
         }
 
@@ -440,16 +453,10 @@ namespace WeaponSystem.Example
             float thick = 2f;
 
             GUI.color = new Color(1f, 1f, 1f, _hitFlashTimer / 0.15f);
-            var tex = Texture2D.whiteTexture;
 
-            // 4 diagonal lines forming an X
-            // top-left
             DrawRotatedLine(cx - gap, cy - gap, -len, -len, thick);
-            // top-right
             DrawRotatedLine(cx + gap, cy - gap, len, -len, thick);
-            // bottom-left
             DrawRotatedLine(cx - gap, cy + gap, -len, len, thick);
-            // bottom-right
             DrawRotatedLine(cx + gap, cy + gap, len, len, thick);
 
             GUI.color = Color.white;
@@ -457,7 +464,6 @@ namespace WeaponSystem.Example
 
         private void DrawRotatedLine(float x, float y, float dx, float dy, float thick)
         {
-            // Simplified: just draw small rects at an angle approximation
             int steps = 4;
             var tex = Texture2D.whiteTexture;
             for (int i = 0; i < steps; i++)
@@ -494,3 +500,18 @@ namespace WeaponSystem.Example
         }
     }
 }
+#else
+// Fallback: If New Input System is not enabled, show a helpful error
+namespace WeaponSystem.Example
+{
+    public class WeaponTestScene : UnityEngine.MonoBehaviour
+    {
+        private void Start()
+        {
+            UnityEngine.Debug.LogError(
+                "[WeaponSystem] New Input System is required! " +
+                "Go to Edit → Project Settings → Player → Active Input Handling → set to 'Both' or 'Input System Package (New)'");
+        }
+    }
+}
+#endif
