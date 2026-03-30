@@ -15,6 +15,7 @@ MonoBehaviour:
   weaponName: M4A1 Assault Rifle
   fireMode: 1
   burstCount: 3
+  fireRate: 10
   ammoCapacity: 30
   maxMagazines: 5
   reloadTime: 2.5

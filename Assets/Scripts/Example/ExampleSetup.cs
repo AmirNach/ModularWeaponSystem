@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,6 +13,7 @@ namespace WeaponSystem.Example
 #if UNITY_EDITOR
         private const string CONFIG_PATH = "Assets/Configs";
         private const string SCENE_PATH = "Assets/Scenes";
+        private const string INPUT_PATH = "Assets/Scripts/Example/WeaponInputActions.inputactions";
 
         [MenuItem("WeaponSystem/Create Example Configs")]
         public static void CreateExampleConfigs()
@@ -68,10 +70,13 @@ namespace WeaponSystem.Example
             feedback.systemDestroyedAlert = true;
             feedback.hitMarkerDuration = 0.25f;
 
-            var weapon = CreateAsset<WeaponConfig>("Weapon_AssaultRifle");
+            var inputAsset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(INPUT_PATH);
+
+            var weapon = CreateAsset<WeaponMainConfig>("Weapon_AssaultRifle");
             weapon.weaponName = "M4A1 Assault Rifle";
             weapon.fireMode = FireMode.Automatic;
             weapon.burstCount = 3;
+            weapon.fireRate = 10f;
             weapon.ammoCapacity = 30;
             weapon.maxMagazines = 5;
             weapon.reloadTime = 2.5f;
@@ -81,6 +86,13 @@ namespace WeaponSystem.Example
             weapon.ammoTypes = new[] { standardAmmo, apAmmo, heAmmo };
             weapon.accuracyConfig = accuracy;
             weapon.feedbackConfig = feedback;
+            // Copy input actions to Configs folder
+            if (inputAsset != null)
+            {
+                var destPath = CONFIG_PATH + "/WeaponInputActions.inputactions";
+                if (!System.IO.File.Exists(destPath))
+                    AssetDatabase.CopyAsset(INPUT_PATH, destPath);
+            }
 
             EditorUtility.SetDirty(standardAmmo);
             EditorUtility.SetDirty(apAmmo);
@@ -98,15 +110,15 @@ namespace WeaponSystem.Example
         [MenuItem("WeaponSystem/Setup Test Scene")]
         public static void SetupTestScene()
         {
-            var weapon = AssetDatabase.LoadAssetAtPath<WeaponConfig>(CONFIG_PATH + "/Weapon_AssaultRifle.asset");
+            var weapon = AssetDatabase.LoadAssetAtPath<WeaponMainConfig>(CONFIG_PATH + "/Weapon_AssaultRifle.asset");
             if (weapon == null)
             {
                 Debug.LogWarning("[WeaponSystem] Run 'Create Example Configs' first!");
                 return;
             }
 
-            var inputAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(
-                "Assets/Scripts/Example/WeaponInputActions.inputactions");
+            var inputAsset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(
+                CONFIG_PATH + "/WeaponInputActions.inputactions");
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
 

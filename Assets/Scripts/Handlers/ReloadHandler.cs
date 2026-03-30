@@ -7,7 +7,7 @@ namespace WeaponSystem
     [Serializable]
     public class ReloadHandler : IReloadable
     {
-        private WeaponConfig _config;
+        private WeaponMainConfig _config;
         private ShootingHandler _shootingHandler;
         private Func<IEnumerator, Coroutine> _startCoroutine;
         private int _remainingMagazines;
@@ -19,7 +19,7 @@ namespace WeaponSystem
         public bool IsReloading => _isReloading;
         public int RemainingMagazines => _remainingMagazines;
 
-        public void Initialize(WeaponConfig config, ShootingHandler shootingHandler,
+        public void Initialize(WeaponMainConfig config, ShootingHandler shootingHandler,
             Func<IEnumerator, Coroutine> startCoroutine)
         {
             _config = config;

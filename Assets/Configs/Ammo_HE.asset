@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 710a97de305ce7d49b4ce5d8b1a742d2, type: 3}
   m_Name: Ammo_HE
   m_EditorClassIdentifier: 
-  ammoType: 0
+  ammoType: 2
   penetratesBuildings: 0
   penetratesVegetation: 0
   timeToImpactCurve:
@@ -39,11 +39,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  timeToDestroy: 0.5
+  timeToDestroy: 0.1
   hitChanceByRange:
-  - 0.95
   - 0.85
-  - 0.7
-  - 0.5
+  - 0.75
+  - 0.6
+  - 0.45
   - 0.3
-  damageMultiplier: 1
+  damageMultiplier: 2

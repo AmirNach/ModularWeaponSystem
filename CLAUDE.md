@@ -49,7 +49,7 @@ Each weapon must support the following properties:
 - ObstacleType (Building, Vegetation, SoftCover, HardCover)
 
 ### ScriptableObjects (Data)
-- WeaponConfig — master config referencing sub-configs
+- WeaponMainConfig — master config referencing sub-configs
 - AmmoConfig — per-ammo-type stats, penetration, hit chance by range
 - AccuracyConfig — base hit chance, range dropoff, movement penalty, posture/target modifiers
 - FeedbackConfig — hit/kill indicator settings
@@ -72,7 +72,7 @@ Each weapon must support the following properties:
 Assets/
   Scripts/
     Enums/        FireMode, AmmoType, TargetPosture, TargetType, ObstacleType
-    Data/         WeaponConfig, AmmoConfig, AccuracyConfig, FeedbackConfig
+    Data/         WeaponMainConfig, AmmoConfig, AccuracyConfig, FeedbackConfig
     Interfaces/   IWeapon, IReloadable
     Handlers/     ShootingHandler, ReloadHandler, FeedbackHandler
     Core/         WeaponController, HitCalculator
@@ -87,3 +87,6 @@ Assets/
 - Enums for fire modes, ammo types, etc.
 - No magic numbers — all values in config
 - User must approve architecture diagram before coding begins
+
+## Git Rules
+- Do NOT commit or push unless explicitly asked in that exact request

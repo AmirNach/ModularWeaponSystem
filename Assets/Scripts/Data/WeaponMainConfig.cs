@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace WeaponSystem
 {
-    [CreateAssetMenu(fileName = "NewWeaponConfig", menuName = "WeaponSystem/WeaponConfig")]
-    public class WeaponConfig : ScriptableObject
+    [CreateAssetMenu(fileName = "NewWeaponMainConfig", menuName = "WeaponSystem/WeaponMainConfig")]
+    public class WeaponMainConfig : ScriptableObject
     {
         [Header("Identity")]
         public string weaponName = "New Weapon";
@@ -12,6 +12,8 @@ namespace WeaponSystem
         public FireMode fireMode = FireMode.SemiAuto;
         [Tooltip("Rounds per burst (only used when fireMode = Burst)")]
         [Min(1)] public int burstCount = 3;
+        [Tooltip("Rounds per second")]
+        [Min(0.1f)] public float fireRate = 10f;
 
         [Header("Ammunition")]
         [Min(1)] public int ammoCapacity = 30;
@@ -30,5 +32,6 @@ namespace WeaponSystem
         [Header("Sub-Configs")]
         public AccuracyConfig accuracyConfig;
         public FeedbackConfig feedbackConfig;
+
     }
 }

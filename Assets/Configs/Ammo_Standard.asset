@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ammoType: 0
   penetratesBuildings: 0
-  penetratesVegetation: 0
+  penetratesVegetation: 1
   timeToImpactCurve:
     serializedVersion: 2
     m_Curve:

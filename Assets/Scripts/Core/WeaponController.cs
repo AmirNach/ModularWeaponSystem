@@ -1,103 +1,156 @@
+using System;
+using System.Collections;
 using UnityEngine;
-#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
-#endif
 
 namespace WeaponSystem
 {
     public class WeaponController : MonoBehaviour
     {
         [Header("Configuration")]
-        [SerializeField] private WeaponConfig config;
+        [SerializeField] private WeaponMainConfig config;
 
-#if ENABLE_INPUT_SYSTEM
         [Header("Input")]
         [SerializeField] private InputActionAsset inputActions;
-#endif
 
         private ShootingHandler _shootingHandler;
         private ReloadHandler _reloadHandler;
         private FeedbackHandler _feedbackHandler;
-
-#if ENABLE_INPUT_SYSTEM
         private InputActionMap _weaponMap;
-#endif
+
+        private Action<InputAction.CallbackContext> _onShootStarted;
+        private Action<InputAction.CallbackContext> _onShootCanceled;
+        private Action<InputAction.CallbackContext> _onReloadPerformed;
+
+        private bool _isSwitchingAmmo;
 
         public ShootingHandler Shooting => _shootingHandler;
         public ReloadHandler Reloading => _reloadHandler;
         public FeedbackHandler Feedback => _feedbackHandler;
-        public WeaponConfig Config => config;
+        public WeaponMainConfig Config => config;
+        public bool IsSwitchingAmmo => _isSwitchingAmmo;
 
         private void Awake() => Initialize(config);
-        private void Update() => _shootingHandler?.Tick();
 
-        private void OnEnable()
+        private void Update()
         {
-#if ENABLE_INPUT_SYSTEM
-            BindInput();
-#endif
+            _shootingHandler?.Tick();
+            HandleAmmoSwitchInput();
         }
 
-        private void OnDisable()
-        {
-#if ENABLE_INPUT_SYSTEM
-            UnbindInput();
-#endif
-        }
+        private void OnEnable() => BindInput();
+        private void OnDisable() => UnbindInput();
 
         /// <summary>Initializes or re-initializes with a new config at runtime.</summary>
-        public void Initialize(WeaponConfig newConfig)
+        public void Initialize(WeaponMainConfig newConfig)
         {
+            if (_shootingHandler != null)
+                _shootingHandler.Shot -= HandleRoundShot;
+            if (_reloadHandler != null)
+            {
+                _reloadHandler.ReloadStarted -= HandleReloadStarted;
+                _reloadHandler.ReloadCompleted -= HandleReloadCompleted;
+            }
+
+            _isSwitchingAmmo = false;
+
             config = newConfig;
             if (config == null)
             {
-                Debug.LogWarning($"[WeaponController] No WeaponConfig assigned on {gameObject.name}.");
+                Debug.LogWarning($"[WeaponController] No config assigned on {gameObject.name}.");
                 return;
             }
 
             _shootingHandler = new ShootingHandler();
-            _reloadHandler = new ReloadHandler();
+            _reloadHandler   = new ReloadHandler();
             _feedbackHandler = new FeedbackHandler();
 
             _shootingHandler.Initialize(config);
             _reloadHandler.Initialize(config, _shootingHandler, StartCoroutine);
             _feedbackHandler.Initialize(config.feedbackConfig, StartCoroutine);
 
-            _shootingHandler.Shot += HandleRoundShot;
+            _shootingHandler.Shot        += HandleRoundShot;
             _reloadHandler.ReloadStarted += HandleReloadStarted;
             _reloadHandler.ReloadCompleted += HandleReloadCompleted;
         }
 
-        // Public API
+        // ── Public API ────────────────────────────────────────────────
 
-        public void Shoot() => _shootingHandler?.Shoot();
-        public void StopShoot() => _shootingHandler?.StopShoot();
-        public bool CanShoot() => _shootingHandler?.CanShoot() ?? false;
+        public void Shoot()       => _shootingHandler?.Shoot();
+        public void StopShoot()   => _shootingHandler?.StopShoot();
+        public bool CanShoot()    => _shootingHandler?.CanShoot() ?? false;
         public int GetCurrentAmmo() => _shootingHandler?.GetCurrentAmmo() ?? 0;
         public void Reload(bool isMoving = false) => _reloadHandler?.Reload(isMoving);
 
+        /// <summary>
+        /// Switches ammo by type. Respects ammoSwitchTime — blocks shooting during switch.
+        /// </summary>
         public bool SwitchAmmoType(AmmoType type)
         {
-            if (_shootingHandler == null) return false;
+            if (_shootingHandler == null || config == null) return false;
+            if (_isSwitchingAmmo) return false;
+            if (_shootingHandler.ActiveAmmo != null && _shootingHandler.ActiveAmmo.ammoType == type) return false;
 
-            if (!_shootingHandler.SwitchAmmoType(type))
+            if (!_shootingHandler.HasAmmoType(type))
             {
                 Debug.LogWarning($"[WeaponController] Ammo type {type} not available on {config.weaponName}.");
                 return false;
             }
 
+            StartCoroutine(AmmoSwitchCoroutine(type));
             return true;
         }
 
-        // Feedback API
+        /// <summary>Switches ammo by slot index (0-based). Called by number keys.</summary>
+        public bool SwitchAmmoByIndex(int index)
+        {
+            if (config == null || config.ammoTypes == null) return false;
+            if (index < 0 || index >= config.ammoTypes.Length) return false;
+            if (config.ammoTypes[index] == null) return false;
 
-        public void NotifyHit() => _feedbackHandler?.ShowHitMarker();
-        public void NotifyKill() => _feedbackHandler?.ShowKillIndicator();
+            return SwitchAmmoType(config.ammoTypes[index].ammoType);
+        }
+
+        // ── Feedback API ──────────────────────────────────────────────
+
+        public void NotifyHit()           => _feedbackHandler?.ShowHitMarker();
+        public void NotifyKill()          => _feedbackHandler?.ShowKillIndicator();
         public void NotifySystemDamaged() => _feedbackHandler?.NotifySystemDamaged();
 
-        // Input
+        // ── Ammo Switching ────────────────────────────────────────────
 
-#if ENABLE_INPUT_SYSTEM
+        private void HandleAmmoSwitchInput()
+        {
+            if (config == null || config.ammoTypes == null) return;
+
+            int max = Mathf.Min(config.ammoTypes.Length, 9);
+            for (int i = 0; i < max; i++)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+                {
+                    SwitchAmmoByIndex(i);
+                    return;
+                }
+            }
+        }
+
+        private IEnumerator AmmoSwitchCoroutine(AmmoType type)
+        {
+            _isSwitchingAmmo = true;
+            _shootingHandler.StopShoot();
+
+            Debug.Log($"[{config.weaponName}] Switching to {type}... ({config.ammoSwitchTime}s)");
+
+            yield return new WaitForSeconds(config.ammoSwitchTime);
+
+            _shootingHandler.SwitchAmmoType(type);
+            _isSwitchingAmmo = false;
+
+            Debug.Log($"[{config.weaponName}] Ammo ready: {type}");
+        }
+
+        // ── Input ─────────────────────────────────────────────────────
+
         private void BindInput()
         {
             if (inputActions == null) return;
@@ -105,32 +158,54 @@ namespace WeaponSystem
             _weaponMap = inputActions.FindActionMap("Weapon");
             if (_weaponMap == null) return;
 
-            var shoot = _weaponMap.FindAction("Shoot");
+            _onShootStarted   = _ => Shoot();
+            _onShootCanceled  = _ => StopShoot();
+            _onReloadPerformed = _ => Reload();
+
+            var shoot  = _weaponMap.FindAction("Shoot");
             var reload = _weaponMap.FindAction("Reload");
 
             if (shoot != null)
             {
-                shoot.started += _ => Shoot();
-                shoot.canceled += _ => StopShoot();
+                shoot.started  += _onShootStarted;
+                shoot.canceled += _onShootCanceled;
             }
 
             if (reload != null)
-                reload.performed += _ => Reload();
+                reload.performed += _onReloadPerformed;
 
             _weaponMap.Enable();
         }
 
         private void UnbindInput()
         {
-            _weaponMap?.Disable();
-        }
-#endif
+            if (_weaponMap == null) return;
 
-        // Internal callbacks
+            var shoot  = _weaponMap.FindAction("Shoot");
+            var reload = _weaponMap.FindAction("Reload");
+
+            if (shoot != null && _onShootStarted != null)
+            {
+                shoot.started  -= _onShootStarted;
+                shoot.canceled -= _onShootCanceled;
+            }
+
+            if (reload != null && _onReloadPerformed != null)
+                reload.performed -= _onReloadPerformed;
+
+            _weaponMap.Disable();
+
+            _onShootStarted    = null;
+            _onShootCanceled   = null;
+            _onReloadPerformed = null;
+        }
+
+        // ── Internal callbacks ────────────────────────────────────────
 
         private void HandleRoundShot(AmmoConfig ammo)
         {
-            Debug.Log($"[{config.weaponName}] Shot — {ammo.ammoType} | Ammo: {_shootingHandler.GetCurrentAmmo()}/{config.ammoCapacity}");
+            var ammoName = ammo != null ? ammo.ammoType.ToString() : "Unknown";
+            Debug.Log($"[{config.weaponName}] Shot — {ammoName} | Ammo: {_shootingHandler.GetCurrentAmmo()}/{config.ammoCapacity}");
         }
 
         private void HandleReloadStarted()
@@ -145,12 +220,14 @@ namespace WeaponSystem
 
         private void OnDestroy()
         {
+            UnbindInput();
+
             if (_shootingHandler != null)
                 _shootingHandler.Shot -= HandleRoundShot;
 
             if (_reloadHandler != null)
             {
-                _reloadHandler.ReloadStarted -= HandleReloadStarted;
+                _reloadHandler.ReloadStarted   -= HandleReloadStarted;
                 _reloadHandler.ReloadCompleted -= HandleReloadCompleted;
             }
         }
