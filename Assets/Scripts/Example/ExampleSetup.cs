@@ -2,24 +2,21 @@ using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.SceneManagement;
 #endif
 
 namespace WeaponSystem.Example
 {
-    /// <summary>
-    /// Editor utility that creates example ScriptableObject configs and a test scene setup
-    /// with one click. Menu: WeaponSystem > Create Example Configs.
-    /// </summary>
     public static class ExampleSetup
     {
 #if UNITY_EDITOR
-        private const string BASE_PATH = "Assets/Configs";
+        private const string CONFIG_PATH = "Assets/Configs";
+        private const string SCENE_PATH = "Assets/Scenes";
 
         [MenuItem("WeaponSystem/Create Example Configs")]
         public static void CreateExampleConfigs()
         {
-            // Ensure folder exists
-            if (!AssetDatabase.IsValidFolder(BASE_PATH))
+            if (!AssetDatabase.IsValidFolder(CONFIG_PATH))
                 AssetDatabase.CreateFolder("Assets", "Configs");
 
             // --- Ammo Configs ---
@@ -83,13 +80,12 @@ namespace WeaponSystem.Example
             weapon.maxMagazines = 5;
             weapon.reloadTime = 2.5f;
             weapon.canReloadWhileMoving = true;
-            weapon.canReloadWhileFiring = false;
+            weapon.canReloadWhileShooting = false;
             weapon.ammoSwitchTime = 1.5f;
             weapon.ammoTypes = new[] { standardAmmo, apAmmo, heAmmo };
             weapon.accuracyConfig = accuracy;
             weapon.feedbackConfig = feedback;
 
-            // Save all
             EditorUtility.SetDirty(standardAmmo);
             EditorUtility.SetDirty(apAmmo);
             EditorUtility.SetDirty(heAmmo);
@@ -99,38 +95,49 @@ namespace WeaponSystem.Example
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("[WeaponSystem] Example configs created at: " + BASE_PATH);
+            Debug.Log("[WeaponSystem] Example configs created at: " + CONFIG_PATH);
             Selection.activeObject = weapon;
         }
 
         [MenuItem("WeaponSystem/Setup Test Scene")]
         public static void SetupTestScene()
         {
-            // Find or create the weapon config
-            var weapon = AssetDatabase.LoadAssetAtPath<WeaponConfig>(BASE_PATH + "/Weapon_AssaultRifle.asset");
+            var weapon = AssetDatabase.LoadAssetAtPath<WeaponConfig>(CONFIG_PATH + "/Weapon_AssaultRifle.asset");
             if (weapon == null)
             {
                 Debug.LogWarning("[WeaponSystem] Run 'Create Example Configs' first!");
                 return;
             }
 
-            // Create test object in scene
-            var go = new GameObject("WeaponSystemTest");
-            var test = go.AddComponent<WeaponTestScene>();
+            var inputAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(
+                "Assets/Scripts/Example/WeaponInputActions.inputactions");
 
-            // Assign config via serialized field
-            var so = new SerializedObject(test);
-            so.FindProperty("weaponConfig").objectReferenceValue = weapon;
-            so.ApplyModifiedProperties();
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
 
-            Selection.activeGameObject = go;
-            Debug.Log("[WeaponSystem] Test scene object created. Press Play to test!");
+            // Create weapon GameObject with controller, config, and input assigned
+            var weaponGO = new GameObject("Weapon");
+            var controller = weaponGO.AddComponent<WeaponController>();
+
+            var controllerSO = new SerializedObject(controller);
+            controllerSO.FindProperty("config").objectReferenceValue = weapon;
+            if (inputAsset != null)
+                controllerSO.FindProperty("inputActions").objectReferenceValue = inputAsset;
+            controllerSO.ApplyModifiedProperties();
+
+            if (!AssetDatabase.IsValidFolder(SCENE_PATH))
+                AssetDatabase.CreateFolder("Assets", "Scenes");
+
+            EditorSceneManager.SaveScene(scene, SCENE_PATH + "/WeaponTestScene.unity");
+
+            Selection.activeGameObject = weaponGO;
+            Debug.Log("[WeaponSystem] Test scene saved at: " + SCENE_PATH + "/WeaponTestScene.unity");
+            Debug.Log("[WeaponSystem] Weapon GameObject created with config assigned. Press Play to use!");
         }
 
         private static T CreateAsset<T>(string name) where T : ScriptableObject
         {
             var asset = ScriptableObject.CreateInstance<T>();
-            AssetDatabase.CreateAsset(asset, $"{BASE_PATH}/{name}.asset");
+            AssetDatabase.CreateAsset(asset, $"{CONFIG_PATH}/{name}.asset");
             return asset;
         }
 #endif

@@ -4,32 +4,28 @@ using UnityEngine;
 
 namespace WeaponSystem
 {
-    /// <summary>
-    /// Handles reload logic — timing, magazine count, constraints.
-    /// Implements IReloadable. Works with FiringHandler to refill ammo.
-    /// </summary>
     [Serializable]
     public class ReloadHandler : IReloadable
     {
-        // --- Config ---
         private WeaponConfig _config;
-        private FiringHandler _firingHandler;
+        private ShootingHandler _shootingHandler;
+        private Func<IEnumerator, Coroutine> _startCoroutine;
 
-        // --- Runtime state ---
         private int _remainingMagazines;
         private bool _isReloading;
 
-        /// <summary>Raised when a reload completes successfully.</summary>
-        public event Action OnReloadComplete;
+        public event Action ReloadCompleted;
 
         // -----------------------------------------------------------------
         // Initialization
         // -----------------------------------------------------------------
 
-        public void Initialize(WeaponConfig config, FiringHandler firingHandler)
+        public void Initialize(WeaponConfig config, ShootingHandler shootingHandler,
+            Func<IEnumerator, Coroutine> startCoroutine)
         {
             _config = config;
-            _firingHandler = firingHandler;
+            _shootingHandler = shootingHandler;
+            _startCoroutine = startCoroutine;
             _remainingMagazines = _config.maxMagazines;
             _isReloading = false;
         }
@@ -38,18 +34,15 @@ namespace WeaponSystem
         // IReloadable
         // -----------------------------------------------------------------
 
-        public void Reload()
-        {
-            // Actual coroutine is started by WeaponController
-        }
+        public void Reload() => Reload(false);
 
         public bool CanReload()
         {
             if (_config == null || _isReloading || _remainingMagazines <= 0)
                 return false;
 
-            if (_firingHandler.GetCurrentAmmo() >= _config.ammoCapacity)
-                return false; // already full
+            if (_shootingHandler.GetCurrentAmmo() >= _config.ammoCapacity)
+                return false;
 
             return true;
         }
@@ -57,29 +50,28 @@ namespace WeaponSystem
         public bool IsReloading => _isReloading;
 
         // -----------------------------------------------------------------
-        // Coroutine (driven by WeaponController)
+        // Reload with movement constraint
         // -----------------------------------------------------------------
 
-        /// <summary>
-        /// Coroutine that performs the reload over time.
-        /// Must be started via MonoBehaviour.StartCoroutine.
-        /// </summary>
-        public IEnumerator ReloadCoroutine(bool isMoving)
+        public void Reload(bool isMoving)
         {
-            if (!CanReload()) yield break;
+            if (!CanReload()) return;
+            if (isMoving && !_config.canReloadWhileMoving) return;
+            if (_shootingHandler.IsShooting && !_config.canReloadWhileShooting) return;
 
-            // Constraint checks
-            if (isMoving && !_config.canReloadWhileMoving) yield break;
-            if (_firingHandler.IsFiring && !_config.canReloadWhileFiring) yield break;
+            _startCoroutine(ReloadCoroutine());
+        }
 
+        private IEnumerator ReloadCoroutine()
+        {
             _isReloading = true;
             yield return new WaitForSeconds(_config.reloadTime);
 
             _remainingMagazines--;
-            _firingHandler.RefillAmmo();
+            _shootingHandler.RefillAmmo();
             _isReloading = false;
 
-            OnReloadComplete?.Invoke();
+            ReloadCompleted?.Invoke();
         }
 
         // -----------------------------------------------------------------

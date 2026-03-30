@@ -4,58 +4,58 @@ using UnityEngine;
 
 namespace WeaponSystem
 {
-    /// <summary>
-    /// Handles operator feedback — hit markers, kill indicators, system damage alerts.
-    /// Pure logic; actual UI rendering is left to subscribers / external systems.
-    /// </summary>
     [Serializable]
     public class FeedbackHandler
     {
-        // --- Config ---
         private FeedbackConfig _config;
+        private Func<IEnumerator, Coroutine> _startCoroutine;
 
-        // --- Events (subscribe from UI / HUD layer) ---
-        public event Action OnHitMarkerShow;
-        public event Action OnHitMarkerHide;
-        public event Action OnKillIndicator;
-        public event Action OnSystemDamaged;
+        public event Action HitMarkerShown;
+        public event Action HitMarkerHidden;
+        public event Action KillConfirmed;
+        public event Action SystemDamaged;
 
         // -----------------------------------------------------------------
         // Initialization
         // -----------------------------------------------------------------
 
-        public void Initialize(FeedbackConfig config)
+        public void Initialize(FeedbackConfig config, Func<IEnumerator, Coroutine> startCoroutine)
         {
             _config = config;
+            _startCoroutine = startCoroutine;
         }
 
         // -----------------------------------------------------------------
         // Public API
         // -----------------------------------------------------------------
 
-        /// <summary>Shows a hit marker for the configured duration.</summary>
-        public IEnumerator ShowHitMarker()
+        public void ShowHitMarker()
         {
-            if (_config == null || !_config.showHitIndicator)
-                yield break;
-
-            OnHitMarkerShow?.Invoke();
-            yield return new WaitForSeconds(_config.hitMarkerDuration);
-            OnHitMarkerHide?.Invoke();
+            if (_config == null || !_config.showHitIndicator) return;
+            _startCoroutine(HitMarkerCoroutine());
         }
 
-        /// <summary>Shows a kill indicator if enabled in config.</summary>
         public void ShowKillIndicator()
         {
             if (_config != null && _config.showKillIndicator)
-                OnKillIndicator?.Invoke();
+                KillConfirmed?.Invoke();
         }
 
-        /// <summary>Notifies that this weapon system took damage/was destroyed.</summary>
-        public void OnSystemDamagedNotify()
+        public void NotifySystemDamaged()
         {
             if (_config != null && _config.systemDestroyedAlert)
-                OnSystemDamaged?.Invoke();
+                SystemDamaged?.Invoke();
+        }
+
+        // -----------------------------------------------------------------
+        // Internal
+        // -----------------------------------------------------------------
+
+        private IEnumerator HitMarkerCoroutine()
+        {
+            HitMarkerShown?.Invoke();
+            yield return new WaitForSeconds(_config.hitMarkerDuration);
+            HitMarkerHidden?.Invoke();
         }
     }
 }

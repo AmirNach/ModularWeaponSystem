@@ -19,7 +19,7 @@ MonoBehaviour:
   maxMagazines: 5
   reloadTime: 2.5
   canReloadWhileMoving: 1
-  canReloadWhileFiring: 0
+  canReloadWhileShooting: 0
   ammoTypes:
   - {fileID: 11400000, guid: 985ae83d6f7094d41842594eb0eebf67, type: 2}
   - {fileID: 11400000, guid: d78d2eb2b971a444a9bdb3c09befaafe, type: 2}

@@ -29,7 +29,7 @@ namespace WeaponSystem
         [Min(0f)]
         public float reloadTime = 2.5f;
         public bool canReloadWhileMoving = true;
-        public bool canReloadWhileFiring;
+        public bool canReloadWhileShooting;
 
         [Header("Ammo Types")]
         [Tooltip("All ammo types this weapon can use. Index 0 is the default.")]

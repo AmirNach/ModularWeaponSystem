@@ -19,7 +19,7 @@ Each weapon must support the following properties:
 - Ammo capacity (per magazine)
 - Number of reloads / total magazines
 - Reload time
-- Reload constraints (can reload while moving? while firing?)
+- Reload constraints (can reload while moving? while shooting?)
 
 ### Firing
 - Fire mode: semi-auto, automatic, burst
@@ -55,12 +55,12 @@ Each weapon must support the following properties:
 - FeedbackConfig — hit/kill indicator settings
 
 ### Interfaces
-- IWeapon — Fire(), StopFire(), CanFire(), GetCurrentAmmo()
+- IWeapon — Shoot(), StopShoot(), CanShoot(), GetCurrentAmmo()
 - IReloadable — Reload(), CanReload(), IsReloading
 
 ### Runtime (MonoBehaviours / Handlers)
 - WeaponController — orchestrator, owns all handlers
-- FiringHandler — implements IWeapon
+- ShootingHandler — implements IWeapon
 - ReloadHandler — implements IReloadable
 - FeedbackHandler — hit/kill/damage feedback
 
@@ -74,9 +74,9 @@ Assets/
     Enums/        FireMode, AmmoType, TargetPosture, TargetType, ObstacleType
     Data/         WeaponConfig, AmmoConfig, AccuracyConfig, FeedbackConfig
     Interfaces/   IWeapon, IReloadable
-    Handlers/     FiringHandler, ReloadHandler, FeedbackHandler
+    Handlers/     ShootingHandler, ReloadHandler, FeedbackHandler
     Core/         WeaponController, HitCalculator
-    Example/      WeaponTestScene, ExampleSetup
+    Example/      ExampleSetup
   Configs/        [ScriptableObject .asset files — created via menu]
 ```
 
