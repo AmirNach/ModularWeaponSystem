@@ -8,7 +8,6 @@ namespace WeaponSystem
     {
         private WeaponConfig _config;
         private AmmoConfig _activeAmmo;
-
         private int _currentAmmo;
         private int _burstRemaining;
         private float _nextShootTime;
@@ -16,26 +15,19 @@ namespace WeaponSystem
 
         public event Action<AmmoConfig> Shot;
 
-        // -----------------------------------------------------------------
-        // Initialization
-        // -----------------------------------------------------------------
+        public AmmoConfig ActiveAmmo => _activeAmmo;
+        public bool IsShooting => _isShooting;
 
         public void Initialize(WeaponConfig config)
         {
             _config = config;
-
             _activeAmmo = (_config.ammoTypes != null && _config.ammoTypes.Length > 0)
                 ? _config.ammoTypes[0]
                 : null;
-
             _currentAmmo = _config.ammoCapacity;
             _burstRemaining = 0;
             _isShooting = false;
         }
-
-        // -----------------------------------------------------------------
-        // IWeapon
-        // -----------------------------------------------------------------
 
         public void Shoot()
         {
@@ -49,13 +41,11 @@ namespace WeaponSystem
                     ShootOnce();
                     _isShooting = false;
                     break;
-
                 case FireMode.Burst:
                     _burstRemaining = _config.burstCount;
                     ShootOnce();
                     _burstRemaining--;
                     break;
-
                 case FireMode.Automatic:
                     ShootOnce();
                     break;
@@ -77,10 +67,7 @@ namespace WeaponSystem
 
         public int GetCurrentAmmo() => _currentAmmo;
 
-        // -----------------------------------------------------------------
-        // Tick (called by WeaponController.Update)
-        // -----------------------------------------------------------------
-
+        /// <summary>Called every frame by WeaponController to continue burst/auto.</summary>
         public void Tick()
         {
             if (_config == null) return;
@@ -94,19 +81,10 @@ namespace WeaponSystem
             }
 
             if (_config.fireMode == FireMode.Automatic && _isShooting && CanShoot())
-            {
                 ShootOnce();
-            }
         }
 
-        // -----------------------------------------------------------------
-        // Ammo management
-        // -----------------------------------------------------------------
-
-        public void RefillAmmo()
-        {
-            _currentAmmo = _config.ammoCapacity;
-        }
+        public void RefillAmmo() => _currentAmmo = _config.ammoCapacity;
 
         public bool SwitchAmmoType(AmmoType type)
         {
@@ -123,13 +101,6 @@ namespace WeaponSystem
 
             return false;
         }
-
-        public AmmoConfig ActiveAmmo => _activeAmmo;
-        public bool IsShooting => _isShooting;
-
-        // -----------------------------------------------------------------
-        // Internal
-        // -----------------------------------------------------------------
 
         private void ShootOnce()
         {

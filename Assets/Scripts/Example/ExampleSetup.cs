@@ -19,7 +19,6 @@ namespace WeaponSystem.Example
             if (!AssetDatabase.IsValidFolder(CONFIG_PATH))
                 AssetDatabase.CreateFolder("Assets", "Configs");
 
-            // --- Ammo Configs ---
             var standardAmmo = CreateAsset<AmmoConfig>("Ammo_Standard");
             standardAmmo.ammoType = AmmoType.Standard;
             standardAmmo.penetratesBuildings = false;
@@ -44,7 +43,6 @@ namespace WeaponSystem.Example
             heAmmo.damageMultiplier = 2f;
             heAmmo.hitChanceByRange = new[] { 0.85f, 0.75f, 0.60f, 0.45f, 0.30f, 0.15f };
 
-            // --- Accuracy Config ---
             var accuracy = CreateAsset<AccuracyConfig>("Accuracy_Rifle");
             accuracy.baseHitChance = 0.85f;
             accuracy.rangeDropoffCurve = AnimationCurve.Linear(0f, 1f, 2000f, 0.15f);
@@ -64,14 +62,12 @@ namespace WeaponSystem.Example
                 new TargetTypeModifier { targetType = TargetType.Structure, multiplier = 1.5f }
             };
 
-            // --- Feedback Config ---
             var feedback = CreateAsset<FeedbackConfig>("Feedback_Default");
             feedback.showHitIndicator = true;
             feedback.showKillIndicator = true;
             feedback.systemDestroyedAlert = true;
             feedback.hitMarkerDuration = 0.25f;
 
-            // --- Weapon Config (master) ---
             var weapon = CreateAsset<WeaponConfig>("Weapon_AssaultRifle");
             weapon.weaponName = "M4A1 Assault Rifle";
             weapon.fireMode = FireMode.Automatic;
@@ -114,7 +110,6 @@ namespace WeaponSystem.Example
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
 
-            // Create weapon GameObject with controller, config, and input assigned
             var weaponGO = new GameObject("Weapon");
             var controller = weaponGO.AddComponent<WeaponController>();
 
@@ -128,10 +123,9 @@ namespace WeaponSystem.Example
                 AssetDatabase.CreateFolder("Assets", "Scenes");
 
             EditorSceneManager.SaveScene(scene, SCENE_PATH + "/WeaponTestScene.unity");
-
             Selection.activeGameObject = weaponGO;
-            Debug.Log("[WeaponSystem] Test scene saved at: " + SCENE_PATH + "/WeaponTestScene.unity");
-            Debug.Log("[WeaponSystem] Weapon GameObject created with config assigned. Press Play to use!");
+
+            Debug.Log("[WeaponSystem] Test scene saved at: " + SCENE_PATH + "/WeaponTestScene.unity — Press Play!");
         }
 
         private static T CreateAsset<T>(string name) where T : ScriptableObject

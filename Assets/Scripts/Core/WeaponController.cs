@@ -28,14 +28,8 @@ namespace WeaponSystem
         public FeedbackHandler Feedback => _feedbackHandler;
         public WeaponConfig Config => config;
 
-        // -----------------------------------------------------------------
-        // Lifecycle
-        // -----------------------------------------------------------------
-
-        private void Awake()
-        {
-            Initialize(config);
-        }
+        private void Awake() => Initialize(config);
+        private void Update() => _shootingHandler?.Tick();
 
         private void OnEnable()
         {
@@ -51,15 +45,7 @@ namespace WeaponSystem
 #endif
         }
 
-        private void Update()
-        {
-            _shootingHandler?.Tick();
-        }
-
-        // -----------------------------------------------------------------
-        // Initialization
-        // -----------------------------------------------------------------
-
+        /// <summary>Initializes or re-initializes with a new config at runtime.</summary>
         public void Initialize(WeaponConfig newConfig)
         {
             config = newConfig;
@@ -78,18 +64,16 @@ namespace WeaponSystem
             _feedbackHandler.Initialize(config.feedbackConfig, StartCoroutine);
 
             _shootingHandler.Shot += HandleRoundShot;
+            _reloadHandler.ReloadStarted += HandleReloadStarted;
             _reloadHandler.ReloadCompleted += HandleReloadCompleted;
         }
 
-        // -----------------------------------------------------------------
         // Public API
-        // -----------------------------------------------------------------
 
         public void Shoot() => _shootingHandler?.Shoot();
         public void StopShoot() => _shootingHandler?.StopShoot();
         public bool CanShoot() => _shootingHandler?.CanShoot() ?? false;
         public int GetCurrentAmmo() => _shootingHandler?.GetCurrentAmmo() ?? 0;
-
         public void Reload(bool isMoving = false) => _reloadHandler?.Reload(isMoving);
 
         public bool SwitchAmmoType(AmmoType type)
@@ -105,17 +89,13 @@ namespace WeaponSystem
             return true;
         }
 
-        // -----------------------------------------------------------------
         // Feedback API
-        // -----------------------------------------------------------------
 
         public void NotifyHit() => _feedbackHandler?.ShowHitMarker();
         public void NotifyKill() => _feedbackHandler?.ShowKillIndicator();
         public void NotifySystemDamaged() => _feedbackHandler?.NotifySystemDamaged();
 
-        // -----------------------------------------------------------------
-        // Input binding (optional, only when InputActionAsset is assigned)
-        // -----------------------------------------------------------------
+        // Input
 
 #if ENABLE_INPUT_SYSTEM
         private void BindInput()
@@ -146,26 +126,33 @@ namespace WeaponSystem
         }
 #endif
 
-        // -----------------------------------------------------------------
-        // Internal
-        // -----------------------------------------------------------------
+        // Internal callbacks
 
         private void HandleRoundShot(AmmoConfig ammo)
         {
             Debug.Log($"[{config.weaponName}] Shot — {ammo.ammoType} | Ammo: {_shootingHandler.GetCurrentAmmo()}/{config.ammoCapacity}");
         }
 
+        private void HandleReloadStarted()
+        {
+            Debug.Log($"[{config.weaponName}] Reloading... ({_reloadHandler.RemainingMagazines} magazines left)");
+        }
+
         private void HandleReloadCompleted()
         {
-            Debug.Log($"[{config.weaponName}] Reload complete — Magazines: {_reloadHandler.RemainingMagazines}");
+            Debug.Log($"[{config.weaponName}] Reload complete — Ammo: {_shootingHandler.GetCurrentAmmo()}/{config.ammoCapacity}");
         }
 
         private void OnDestroy()
         {
             if (_shootingHandler != null)
                 _shootingHandler.Shot -= HandleRoundShot;
+
             if (_reloadHandler != null)
+            {
+                _reloadHandler.ReloadStarted -= HandleReloadStarted;
                 _reloadHandler.ReloadCompleted -= HandleReloadCompleted;
+            }
         }
     }
 }

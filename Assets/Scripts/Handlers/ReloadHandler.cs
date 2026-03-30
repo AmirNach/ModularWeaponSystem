@@ -10,15 +10,14 @@ namespace WeaponSystem
         private WeaponConfig _config;
         private ShootingHandler _shootingHandler;
         private Func<IEnumerator, Coroutine> _startCoroutine;
-
         private int _remainingMagazines;
         private bool _isReloading;
 
+        public event Action ReloadStarted;
         public event Action ReloadCompleted;
 
-        // -----------------------------------------------------------------
-        // Initialization
-        // -----------------------------------------------------------------
+        public bool IsReloading => _isReloading;
+        public int RemainingMagazines => _remainingMagazines;
 
         public void Initialize(WeaponConfig config, ShootingHandler shootingHandler,
             Func<IEnumerator, Coroutine> startCoroutine)
@@ -30,28 +29,7 @@ namespace WeaponSystem
             _isReloading = false;
         }
 
-        // -----------------------------------------------------------------
-        // IReloadable
-        // -----------------------------------------------------------------
-
         public void Reload() => Reload(false);
-
-        public bool CanReload()
-        {
-            if (_config == null || _isReloading || _remainingMagazines <= 0)
-                return false;
-
-            if (_shootingHandler.GetCurrentAmmo() >= _config.ammoCapacity)
-                return false;
-
-            return true;
-        }
-
-        public bool IsReloading => _isReloading;
-
-        // -----------------------------------------------------------------
-        // Reload with movement constraint
-        // -----------------------------------------------------------------
 
         public void Reload(bool isMoving)
         {
@@ -62,9 +40,19 @@ namespace WeaponSystem
             _startCoroutine(ReloadCoroutine());
         }
 
+        public bool CanReload()
+        {
+            return _config != null
+                && !_isReloading
+                && _remainingMagazines > 0
+                && _shootingHandler.GetCurrentAmmo() < _config.ammoCapacity;
+        }
+
         private IEnumerator ReloadCoroutine()
         {
             _isReloading = true;
+            ReloadStarted?.Invoke();
+
             yield return new WaitForSeconds(_config.reloadTime);
 
             _remainingMagazines--;
@@ -73,11 +61,5 @@ namespace WeaponSystem
 
             ReloadCompleted?.Invoke();
         }
-
-        // -----------------------------------------------------------------
-        // Queries
-        // -----------------------------------------------------------------
-
-        public int RemainingMagazines => _remainingMagazines;
     }
 }
